@@ -4,10 +4,6 @@ inclusion: always
 
 # Workspace-Specific Patterns
 
-## Purpose
-
-This document captures project-specific patterns, conventions, and quirks for this tabletop game project.
-
 ## Project Structure
 
 **Unified monorepo**: NestJS backend in `server/`, Vue 3 frontend in `client/`, single `package.json` at root.
@@ -29,6 +25,7 @@ This document captures project-specific patterns, conventions, and quirks for th
 **Test runner**: Vitest (not Jest). Run with `npm test` which executes `vitest --run`.
 **Config**: `vitest.config.ts` at root, includes both `server/**/*.spec.ts` and `client/**/*.spec.ts`.
 **Environment**: jsdom with globals enabled.
+**Test pattern**: Service unit tests live alongside their module files (e.g., `server/modules/combat/combat.service.spec.ts`). Tests mock the TypeORM Repository and instantiate the service directly.
 
 ## TypeScript
 
@@ -43,6 +40,8 @@ This document captures project-specific patterns, conventions, and quirks for th
 - `@nestjs/serve-static` serves built Vue app from `dist/client/` in production.
 - Base CRUD pattern in `server/common/` — extend `BaseCrudService` and `BaseCrudController`.
 - Server uses `.js` extensions in imports (nodenext module resolution).
+- Entity definitions in `server/entities/`.
+- Feature modules in `server/modules/<entity-name>/` (module, service, controller).
 
 ## Client Conventions
 
@@ -50,3 +49,17 @@ This document captures project-specific patterns, conventions, and quirks for th
 - Axios-based API client at `client/api/client.ts` with typed helpers.
 - Pinia for state management.
 - `@` alias maps to `./client/`.
+
+## Git Workflow
+
+**Branch strategy**: This project commits directly to `master`. No feature branches, no pull requests.
+
+When the user says "commit and push", commit all staged changes to `master` and push to `origin/master`. Do not create feature branches or suggest PRs.
+
+```bash
+git add <files>
+git commit -m "descriptive message"
+git push origin master
+```
+
+If the push is rejected due to remote changes, pull with rebase first: `git pull --rebase origin master`, then push again.
