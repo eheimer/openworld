@@ -9,7 +9,7 @@
     "rootDir": "./server",
     "declaration": true,
     "removeComments": true,
-    "incremental": true,
+    "incremental": false,
     "sourceMap": true,
     "strictNullChecks": true,
     "noImplicitAny": true,

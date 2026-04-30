@@ -1,1 +1,1 @@
-// Entity barrel file — add entity exports here as they are created.
+export { Player } from './player.entity.js';
