@@ -1,5 +1,6 @@
 import {
   DeepPartial,
+  FindManyOptions,
   FindOptionsOrder,
   FindOptionsWhere,
   Repository,
@@ -11,9 +12,10 @@ export interface PaginatedResult<T> {
   total: number;
   page: number;
   limit: number;
+  totalPages: number;
 }
 
-export interface FindAllOptions {
+export interface QueryOptions {
   page?: number;
   limit?: number;
   sortBy?: string;
@@ -26,20 +28,30 @@ export class BaseCrudService<T extends { id: number }> {
     protected readonly relations: string[] = [],
   ) {}
 
-  async findAll(options: FindAllOptions = {}): Promise<PaginatedResult<T>> {
-    const { page = 1, limit = 20, sortBy = 'id', sortOrder = 'ASC' } = options;
-    const skip = (page - 1) * limit;
+  async findAll(options: QueryOptions = {}): Promise<PaginatedResult<T>> {
+    const {
+      page = 1,
+      limit = 50,
+      sortBy = 'id',
+      sortOrder = 'ASC',
+    } = options;
 
-    const order = { [sortBy]: sortOrder } as FindOptionsOrder<T>;
-
-    const [data, total] = await this.repository.findAndCount({
+    const findOptions: FindManyOptions<T> = {
       relations: this.relations,
-      order,
-      skip,
+      order: { [sortBy]: sortOrder } as FindOptionsOrder<T>,
+      skip: (page - 1) * limit,
       take: limit,
-    });
+    };
 
-    return { data, total, page, limit };
+    const [data, total] = await this.repository.findAndCount(findOptions);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: number): Promise<T> {
@@ -57,7 +69,8 @@ export class BaseCrudService<T extends { id: number }> {
 
   async create(data: DeepPartial<T>): Promise<T> {
     const entity = this.repository.create(data);
-    return this.repository.save(entity);
+    const saved = await this.repository.save(entity);
+    return this.findOne((saved as any).id);
   }
 
   async update(id: number, data: DeepPartial<T>): Promise<T> {
@@ -67,7 +80,7 @@ export class BaseCrudService<T extends { id: number }> {
   }
 
   async remove(id: number): Promise<void> {
-    await this.findOne(id);
-    await this.repository.delete(id);
+    const entity = await this.findOne(id);
+    await this.repository.remove(entity);
   }
 }

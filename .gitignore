@@ -5,3 +5,9 @@ dist/
 .DS_Store
 Thumbs.db
 .vscode/
+*.code-workspace
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/data/

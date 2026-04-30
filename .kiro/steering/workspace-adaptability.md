@@ -50,6 +50,13 @@ inclusion: always
 - Pinia for state management.
 - `@` alias maps to `./client/`.
 
+## Database
+
+**Initialization**: `npm run db:init` — copies phase 1 database, applies dynamic DDL, runs phase 2 migrations.
+**Location**: `data/game.sqlite` (gitignored, recreatable).
+**Phase 1 source**: `../reboot/reference/dev.sqlite` + `../reboot/reference/dynamic-tables.sql`.
+**Phase 2 migrations**: `migrations/*.sql` — numbered sequentially, run by `db:init`.
+
 ## Git Workflow
 
 **Branch strategy**: This project commits directly to `master`. No feature branches, no pull requests.

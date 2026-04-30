@@ -11,7 +11,10 @@
     "build:api": "nest build",
     "build:ui": "vite build --config vite.config.ts",
     "start": "node dist/server/main.js",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "db:init": "bash scripts/init-db.sh"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.19",
@@ -39,6 +42,7 @@
     "@nestjs/cli": "^11.0.21",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.19",
+    "@playwright/test": "^1.59.1",
     "@tsconfig/node24": "^24.0.4",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
