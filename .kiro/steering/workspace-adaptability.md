@@ -40,8 +40,96 @@ inclusion: always
 - `@nestjs/serve-static` serves built Vue app from `dist/client/` in production.
 - Base CRUD pattern in `server/common/` — extend `BaseCrudService` and `BaseCrudController`.
 - Server uses `.js` extensions in imports (nodenext module resolution).
-- Entity definitions in `server/entities/`.
-- Feature modules in `server/modules/<entity-name>/` (module, service, controller).
+- Entity definitions in `server/entities/` (flat directory, all entities together).
+- Domain modules in `server/modules/` (grouped by functional area).
+
+## Module Architecture
+
+Modules are grouped by domain. Each module registers multiple related entities, services, and controllers:
+
+```
+server/modules/
+  auth/          — Login, register, JWT (custom, not CRUD)
+  metadata/      — Entity introspection for admin UI (custom)
+  players/       — Player CRUD + auth-related lookups
+  combat/        — Monster, MonsterAction, MonsterInstance, MonsterCondition,
+                   Action, Condition, ConditionOverride, CharacterCondition,
+                   DamageType, SlayerType
+  equipment/     — Weapon, WeaponAttribute, WeaponSkill, WeaponInstance,
+                   WeaponPoison, SpecialMove, Armor, ArmorAttribute, ArmorBand,
+                   ArmorClass, ArmorLocation, Shield, Gem, GemRarity,
+                   JewelryAttribute, JewelryLocation, SpellbookAttribute,
+                   SpellbookInstance, MagicalProperty, LootTable
+  magic/         — Spell, SpellSchool
+  crafting/      — Material, MaterialType, Recipe, RecipeFamily,
+                   RecipeIngredient, RunicAffixPool, RunicAffixPoolEntry,
+                   RunicItemRuleGroup, RunicToolFamily,
+                   RunicToolFamilyRuleGroup, RunicToolTier
+  characters/    — Character, Race, Skill
+  inventory/     — Inventory, StorageItem, StorageItemCategory, StorageType,
+                   ReloadFamily, EquipLocation, HeldSlot
+```
+
+Each service file is named after its entity (e.g., `monster.service.ts` inside `combat/`). Each controller file follows the same pattern. The module file (e.g., `combat.module.ts`) registers all entities, services, and controllers for the group.
+
+## Cross-Module Dependencies (Game Logic)
+
+When adding game logic that requires services from other modules, follow these rules to avoid circular dependencies:
+
+### Rule 1: Prefer Repository injection over Service injection
+
+If you only need simple queries against another module's entity, inject the TypeORM Repository directly instead of importing the other module's service. Repositories are globally available via `TypeOrmModule.forFeature()` — no module import needed.
+
+```typescript
+// GOOD: No cross-module dependency
+@Injectable()
+export class CombatService {
+  constructor(
+    @InjectRepository(Weapon) private weaponRepo: Repository<Weapon>,
+  ) {}
+}
+
+// AVOID: Creates a module dependency
+@Injectable()
+export class CombatService {
+  constructor(private weaponService: WeaponService) {}
+}
+```
+
+### Rule 2: When you genuinely need another module's service
+
+If you need business logic from another module (not just data access), import the module:
+
+```typescript
+@Module({
+  imports: [EquipmentModule],  // Makes exported services available
+  // ...
+})
+export class CombatModule {}
+```
+
+This is safe as long as the dependency is one-directional. Check the dependency direction before adding imports.
+
+### Rule 3: Break circular dependencies with a shared module
+
+If Module A needs Module B's service AND Module B needs Module A's service, extract the shared logic into a new module that both depend on:
+
+```
+BEFORE (circular):  CombatModule ↔ EquipmentModule
+AFTER (resolved):   CombatModule → SharedCombatEquipModule ← EquipmentModule
+```
+
+### Rule 4: Use forwardRef() as a last resort
+
+NestJS `forwardRef()` can break circular module references, but it makes the dependency graph harder to reason about. Prefer restructuring over forwardRef.
+
+### Rule 5: Entity files can cross-reference freely
+
+Entity files (in `server/entities/`) are plain TypeORM-decorated classes. They can import each other for relation decorators without any NestJS module system concerns. The circular dependency risk is only at the module/service level.
+
+### Dependency flow (current, no game logic yet)
+
+All modules are currently independent leaf nodes — no module imports another domain module. The only shared dependency is `TypeOrmModule.forFeature()` for entity registration. This will change as game logic is added.
 
 ## Client Conventions
 
