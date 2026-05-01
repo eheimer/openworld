@@ -86,6 +86,36 @@ export async function fetchMe(): Promise<PlayerInfo> {
   return data;
 }
 
+// --- Metadata ---
+
+export interface ColumnMeta {
+  name: string;
+  type: string;
+  nullable: boolean;
+  isPrimary: boolean;
+}
+
+export interface RelationMeta {
+  propertyName: string;
+  relationType: string;
+  targetEntity: string;
+  targetRoute: string;
+  joinColumn?: string;
+}
+
+export interface TableMeta {
+  name: string;
+  route: string;
+  displayName: string;
+  columns: ColumnMeta[];
+  relations: RelationMeta[];
+}
+
+export async function fetchMetadata(): Promise<TableMeta[]> {
+  const { data } = await api.get<TableMeta[]>('/metadata/tables');
+  return data;
+}
+
 // --- Generic CRUD ---
 
 export async function fetchAll<T>(

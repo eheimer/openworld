@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { join } from 'path';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { MetadataModule } from './modules/metadata/metadata.module.js';
+import { PlayersModule } from './modules/players/players.module.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 
 @Module({
@@ -15,7 +17,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
-      exclude: ['/api/(.*)'],
+      exclude: ['/api/{*path}'],
     }),
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
@@ -24,6 +26,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
       synchronize: false,
     }),
     AuthModule,
+    MetadataModule,
+    PlayersModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },

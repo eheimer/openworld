@@ -1,5 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, type NavigationGuardWithThis } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+
+const adminGuard: NavigationGuardWithThis<undefined> = () => {
+  const auth = useAuthStore();
+  if (!auth.isAuthenticated) {
+    return { name: 'login' };
+  }
+  if (!auth.isAdmin) {
+    return { path: '/' };
+  }
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,6 +24,18 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('@/views/HomeView.vue'),
+    },
+    {
+      path: '/admin',
+      component: () => import('@/views/admin/AdminLayout.vue'),
+      beforeEnter: adminGuard,
+      children: [
+        {
+          path: ':table',
+          name: 'admin-table',
+          component: () => import('@/views/admin/AdminTableView.vue'),
+        },
+      ],
     },
   ],
 });
