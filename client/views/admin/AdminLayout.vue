@@ -2,7 +2,6 @@
 import { computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useMetadataStore } from '@/stores/metadata';
-import PanelMenu from 'primevue/panelmenu';
 
 const router = useRouter();
 const route = useRoute();
@@ -14,16 +13,22 @@ const typeEmoji: Record<string, string> = {
   Junction: '🔗',
 };
 
-const menuItems = computed(() => {
-  const groups = metadata.getGroupedTables();
-  return groups.map(([label, tables]) => ({
+const typeLabel: Record<string, string> = {
+  Canon: 'Canon — static game data (read-only)',
+  Dynamic: 'Dynamic — runtime session data',
+  Junction: 'Junction — relationship table',
+};
+
+const groupedTables = computed(() => {
+  return metadata.getGroupedTables().map(([label, tables]) => ({
     label,
     icon: groupIcon(label),
-    items: tables.map((t) => ({
-      label: t.displayName,
-      route: `/admin/${t.route}`,
-      class: route.path === `/admin/${t.route}` ? 'active-menu-item' : '',
-      typeEmoji: typeEmoji[metadata.getTableType(t.route)] ?? '',
+    tables: tables.map((t) => ({
+      ...t,
+      path: `/admin/${t.route}`,
+      active: route.path === `/admin/${t.route}`,
+      emoji: typeEmoji[metadata.getTableType(t.route)] ?? '',
+      typeTitle: typeLabel[metadata.getTableType(t.route)] ?? '',
     })),
   }));
 });
@@ -59,22 +64,28 @@ onMounted(async () => {
         <span class="subtitle">Admin Editor</span>
       </router-link>
       <nav class="sidebar-nav">
-        <PanelMenu :model="menuItems" class="sidebar-menu">
-          <template #item="{ item }">
-            <router-link v-if="item.route" :to="item.route" class="menu-link" :class="item.class">
-              <span>{{ item.label }}</span>
-              <span v-if="item.typeEmoji" class="type-badge">{{ item.typeEmoji }}</span>
-            </router-link>
-            <span v-else class="menu-group">
-              <i :class="item.icon" />
-              <span>{{ item.label }}</span>
-            </span>
-          </template>
-        </PanelMenu>
+        <div v-for="group in groupedTables" :key="group.label" class="sidebar-group">
+          <div class="menu-group">
+            <i :class="group.icon" />
+            <span>{{ group.label }}</span>
+          </div>
+          <router-link
+            v-for="t in group.tables"
+            :key="t.route"
+            :to="t.path"
+            class="menu-link"
+            :class="{ 'active-menu-item': t.active }"
+          >
+            <span>{{ t.displayName }}</span>
+            <span v-if="t.emoji" class="type-badge" :title="t.typeTitle">{{ t.emoji }}</span>
+          </router-link>
+        </div>
       </nav>
     </aside>
     <main class="admin-main">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <component :is="Component" style="display: flex; flex-direction: column; flex: 1; min-height: 0;" />
+      </router-view>
     </main>
   </div>
 </template>
@@ -82,7 +93,9 @@ onMounted(async () => {
 <style scoped>
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -154,32 +167,17 @@ onMounted(async () => {
   font-size: 0.875rem;
 }
 
+.sidebar-group {
+  margin-bottom: 0.75rem;
+}
+
 .admin-main {
   flex: 1;
   padding: 1.5rem;
-  overflow-x: auto;
+  overflow: hidden;
   background: #f8f9fa;
-}
-
-:deep(.p-panelmenu) {
-  background: transparent;
-  border: none;
-}
-
-:deep(.p-panelmenu-panel) {
-  background: transparent;
-  border: none;
-  margin-bottom: 0.25rem;
-}
-
-:deep(.p-panelmenu-header-content) {
-  background: transparent !important;
-  border: none !important;
-  color: #e2e8f0 !important;
-}
-
-:deep(.p-panelmenu-content) {
-  background: transparent !important;
-  border: none !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 </style>

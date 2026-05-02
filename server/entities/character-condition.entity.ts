@@ -1,5 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from '../common/base.entity.js';
+import { Entity, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { Condition } from './condition.entity.js';
 import { Character } from './character.entity.js';
 
@@ -21,7 +20,10 @@ import { Character } from './character.entity.js';
  * because recurring effects (like poison) roll each round.
  */
 @Entity('character_condition')
-export class CharacterCondition extends BaseEntity {
+export class CharacterCondition {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
   @Column()
   roundsRemaining!: number;
 
@@ -48,7 +50,7 @@ export class CharacterCondition extends BaseEntity {
   targetType!: string;
 
   /** The character affected by this condition — the ownership column. */
-  @Column()
+  @Column({ nullable: true })
   characterId!: number;
 
   @ManyToOne(() => Character)

@@ -8,21 +8,41 @@ const authStore = useAuthStore();
 
 <template>
   <Toast />
-  <header v-if="authStore.isAuthenticated" class="app-header">
-    <nav class="app-nav">
-      <router-link to="/">Home</router-link>
-      <router-link v-if="authStore.isAdmin" to="/admin">Admin</router-link>
-      <button class="logout-btn" @click="authStore.logout()">Logout</button>
-    </nav>
-  </header>
-  <RouterView />
+  <div class="app-shell">
+    <header v-if="authStore.isAuthenticated" class="app-header">
+      <nav class="app-nav">
+        <router-link to="/">Home</router-link>
+        <router-link v-if="authStore.isAdmin" to="/admin">Admin</router-link>
+        <button class="logout-btn" @click="authStore.logout()">Logout</button>
+      </nav>
+    </header>
+    <div class="app-content">
+      <RouterView />
+    </div>
+  </div>
 </template>
 
 <style scoped>
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .app-header {
   padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--p-surface-200, #e2e8f0);
   background: var(--p-surface-0, #ffffff);
+  flex-shrink: 0;
+}
+
+.app-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .app-nav {

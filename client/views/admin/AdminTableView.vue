@@ -25,5 +25,14 @@ watch(tableMeta, (meta) => {
 </script>
 
 <template>
-  <CrudTable v-if="tableMeta" :table-meta="tableMeta" />
+  <CrudTable v-if="tableMeta" :table-meta="tableMeta" class="table-view" />
 </template>
+
+<style scoped>
+.table-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+</style>

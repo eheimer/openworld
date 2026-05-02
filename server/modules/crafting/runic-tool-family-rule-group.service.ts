@@ -10,6 +10,6 @@ export class RunicToolFamilyRuleGroupService extends BaseCrudService<RunicToolFa
     @InjectRepository(RunicToolFamilyRuleGroup)
     repository: Repository<RunicToolFamilyRuleGroup>,
   ) {
-    super(repository, []);
+    super(repository, ['runicToolFamily', 'runicItemRuleGroup']);
   }
 }

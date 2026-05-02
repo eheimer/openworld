@@ -10,6 +10,6 @@ export class RunicToolFamilyService extends BaseCrudService<RunicToolFamily> {
     @InjectRepository(RunicToolFamily)
     repository: Repository<RunicToolFamily>,
   ) {
-    super(repository, []);
+    super(repository, ['craftingSkill']);
   }
 }

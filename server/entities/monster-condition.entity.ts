@@ -1,5 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from '../common/base.entity.js';
+import { Entity, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { Condition } from './condition.entity.js';
 import { MonsterInstance } from './monster-instance.entity.js';
 
@@ -21,7 +20,10 @@ import { MonsterInstance } from './monster-instance.entity.js';
  * because recurring effects (like poison) roll each round.
  */
 @Entity('monster_condition')
-export class MonsterCondition extends BaseEntity {
+export class MonsterCondition {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
   @Column()
   roundsRemaining!: number;
 
@@ -48,7 +50,7 @@ export class MonsterCondition extends BaseEntity {
   targetType!: string;
 
   /** The monster instance affected by this condition — the ownership column. */
-  @Column()
+  @Column({ nullable: true })
   creatureId!: number;
 
   @ManyToOne(() => MonsterInstance)

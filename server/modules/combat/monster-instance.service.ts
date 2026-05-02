@@ -10,6 +10,6 @@ export class MonsterInstanceService extends BaseCrudService<MonsterInstance> {
     @InjectRepository(MonsterInstance)
     repository: Repository<MonsterInstance>,
   ) {
-    super(repository, ['monster', 'character']);
+    super(repository, ['monster', 'owner', 'nextAction', 'loot']);
   }
 }

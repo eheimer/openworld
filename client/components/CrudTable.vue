@@ -27,10 +27,9 @@ const confirm = useConfirm()
 
 const loading = ref(false)
 const rows = ref<any[]>([])
-const totalRecords = ref(0)
 const lazyParams = ref<QueryParams>({
   page: 1,
-  limit: 25,
+  limit: 10000,
   sortBy: 'id',
   sortOrder: 'ASC',
 })
@@ -60,18 +59,11 @@ async function loadData() {
   try {
     const result: PaginatedResponse<any> = await fetchAll(props.tableMeta.route, lazyParams.value)
     rows.value = result.data
-    totalRecords.value = result.total
   } catch (e: any) {
     toast.add({ severity: 'error', summary: 'Error', detail: e.message, life: 3000 })
   } finally {
     loading.value = false
   }
-}
-
-function onPage(event: any) {
-  lazyParams.value.page = event.page + 1
-  lazyParams.value.limit = event.rows
-  loadData()
 }
 
 function onSort(event: any) {
@@ -133,13 +125,30 @@ function getRelationDisplay(row: any, rel: any): string {
   return related.name || related.id || '—'
 }
 
+const TEXT_MAX_LENGTH = 60
+
+// Truncate long text values for display
+function truncate(value: any): string {
+  if (value == null) return '—'
+  const str = String(value)
+  if (str.length <= TEXT_MAX_LENGTH) return str
+  return str.slice(0, TEXT_MAX_LENGTH) + '…'
+}
+
+// Return full text for tooltip, or empty string if not truncated
+function fullText(value: any): string {
+  if (value == null) return ''
+  const str = String(value)
+  return str.length > TEXT_MAX_LENGTH ? str : ''
+}
+
 // Check if a column is a FK id column that has a corresponding relation
 function isRelationIdColumn(colName: string): boolean {
   return columnRelations.value.some((r) => r.joinColumn === colName)
 }
 
 watch(() => props.tableMeta.route, () => {
-  lazyParams.value = { page: 1, limit: 25, sortBy: 'id', sortOrder: 'ASC' }
+  lazyParams.value = { page: 1, limit: 10000, sortBy: 'id', sortOrder: 'ASC' }
   loadData()
 })
 
@@ -147,27 +156,22 @@ onMounted(loadData)
 </script>
 
 <template>
-  <ConfirmDialog />
+  <div class="crud-wrapper">
+    <ConfirmDialog />
 
-  <div class="crud-header">
-    <h2>{{ tableMeta.displayName }}</h2>
-    <Button label="New" icon="pi pi-plus" @click="openNew" />
-  </div>
+    <div class="crud-header">
+      <h2>{{ tableMeta.displayName }}</h2>
+      <Button label="New" icon="pi pi-plus" @click="openNew" />
+    </div>
 
-  <DataTable
+    <DataTable
     :value="rows"
     :loading="loading"
-    :lazy="true"
-    :paginator="true"
-    :rows="lazyParams.limit"
-    :totalRecords="totalRecords"
-    :rowsPerPageOptions="[10, 25, 50, 100]"
-    @page="onPage"
     @sort="onSort"
+    scrollable
     removableSort
     stripedRows
     size="small"
-    tableStyle="min-width: 50rem"
     class="crud-table"
   >
     <Column field="id" header="ID" sortable style="width: 60px" />
@@ -184,7 +188,7 @@ onMounted(loadData)
           <span v-if="col.type === 'boolean'">
             <i :class="data[col.name] ? 'pi pi-check text-green' : 'pi pi-times text-red'" />
           </span>
-          <span v-else>{{ data[col.name] ?? '—' }}</span>
+          <span v-else :title="fullText(data[col.name])" class="cell-text">{{ truncate(data[col.name]) }}</span>
         </template>
       </Column>
     </template>
@@ -225,14 +229,36 @@ onMounted(loadData)
       @cancel="dialogVisible = false"
     />
   </Dialog>
+  </div>
 </template>
 
 <style scoped>
+.crud-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+:deep(.crud-table) {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+:deep(.crud-table .p-datatable-table-container) {
+  flex: 1;
+  overflow: auto;
+}
+
 .crud-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  flex-shrink: 0;
 }
 .crud-header h2 {
   margin: 0;
@@ -245,4 +271,12 @@ onMounted(loadData)
 }
 .text-green { color: #22c55e; }
 .text-red { color: #ef4444; }
+.cell-text {
+  display: inline-block;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
 </style>
