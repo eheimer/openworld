@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Entities
 import { Material } from '../../entities/material.entity.js';
+import { MaterialOverlay } from '../../entities/material-overlay.entity.js';
 import { MaterialType } from '../../entities/material-type.entity.js';
 import { Recipe } from '../../entities/recipe.entity.js';
 import { RecipeFamily } from '../../entities/recipe-family.entity.js';
@@ -16,6 +17,7 @@ import { RunicToolTier } from '../../entities/runic-tool-tier.entity.js';
 
 // Services
 import { MaterialService } from './material.service.js';
+import { MaterialOverlayService } from './material-overlay.service.js';
 import { MaterialTypeService } from './material-type.service.js';
 import { RecipeService } from './recipe.service.js';
 import { RecipeFamilyService } from './recipe-family.service.js';
@@ -29,6 +31,7 @@ import { RunicToolTierService } from './runic-tool-tier.service.js';
 
 // Controllers
 import { MaterialController } from './material.controller.js';
+import { MaterialOverlayController } from './material-overlay.controller.js';
 import { MaterialTypeController } from './material-type.controller.js';
 import { RecipeController } from './recipe.controller.js';
 import { RecipeFamilyController } from './recipe-family.controller.js';
@@ -44,6 +47,7 @@ import { RunicToolTierController } from './runic-tool-tier.controller.js';
   imports: [
     TypeOrmModule.forFeature([
       Material,
+      MaterialOverlay,
       MaterialType,
       Recipe,
       RecipeFamily,
@@ -58,6 +62,7 @@ import { RunicToolTierController } from './runic-tool-tier.controller.js';
   ],
   controllers: [
     MaterialController,
+    MaterialOverlayController,
     MaterialTypeController,
     RecipeController,
     RecipeFamilyController,
@@ -71,6 +76,7 @@ import { RunicToolTierController } from './runic-tool-tier.controller.js';
   ],
   providers: [
     MaterialService,
+    MaterialOverlayService,
     MaterialTypeService,
     RecipeService,
     RecipeFamilyService,
@@ -84,6 +90,7 @@ import { RunicToolTierController } from './runic-tool-tier.controller.js';
   ],
   exports: [
     MaterialService,
+    MaterialOverlayService,
     MaterialTypeService,
     RecipeService,
     RecipeFamilyService,

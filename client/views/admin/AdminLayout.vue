@@ -35,11 +35,16 @@ const groupedTables = computed(() => {
 
 function groupIcon(label: string): string {
   const icons: Record<string, string> = {
-    'Combat': 'pi pi-bolt',
-    'Equipment': 'pi pi-shield',
-    'Crafting': 'pi pi-wrench',
+    'Monsters': 'pi pi-reddit',
     'Characters': 'pi pi-users',
-    'Lookup Tables': 'pi pi-list',
+    'Combat': 'pi pi-bolt',
+    'Weapons': 'pi pi-hammer',
+    'Armor': 'pi pi-shield',
+    'Jewelry & Spellbooks': 'pi pi-sparkles',
+    'Magic': 'pi pi-star',
+    'Crafting': 'pi pi-wrench',
+    'Inventory': 'pi pi-box',
+    'Other': 'pi pi-ellipsis-h',
   };
   return icons[label] || 'pi pi-table';
 }

@@ -6,33 +6,30 @@ export type TableType = 'Canon' | 'Dynamic' | 'Junction';
 
 export const TABLE_TYPE_MAP: Record<string, TableType> = {
   // Dynamic tables (⚡)
-  'weapon-poisons': 'Dynamic',
-  'monster-instances': 'Dynamic',
-  'character-conditions': 'Dynamic',
-  'monster-conditions': 'Dynamic',
-  'weapon-instances': 'Dynamic',
-  'spellbook-instances': 'Dynamic',
-  'inventories': 'Dynamic',
-  'players': 'Dynamic',
-  'games': 'Dynamic',
-  'characters': 'Dynamic',
-  'character-skills': 'Dynamic',
-  'battles': 'Dynamic',
   'armor-instances': 'Dynamic',
   'armor-instance-attributes': 'Dynamic',
   'armor-instance-damage-reductions': 'Dynamic',
+  'battles': 'Dynamic',
+  'characters': 'Dynamic',
+  'character-conditions': 'Dynamic',
+  'character-skills': 'Dynamic',
+  'games': 'Dynamic',
+  'inventories': 'Dynamic',
   'jewelry-instances': 'Dynamic',
   'jewelry-instance-attributes': 'Dynamic',
-  'weapon-instance-attributes': 'Dynamic',
+  'monster-conditions': 'Dynamic',
+  'monster-instances': 'Dynamic',
+  'players': 'Dynamic',
+  'shield-instances': 'Dynamic',
+  'spellbook-instances': 'Dynamic',
   'spellbook-instance-attributes': 'Dynamic',
+  'weapon-instances': 'Dynamic',
+  'weapon-instance-attributes': 'Dynamic',
+  'weapon-poisons': 'Dynamic',
 
   // Junction tables (🔗)
   'condition-overrides': 'Junction',
   'race-skills': 'Junction',
-  'monster-slayers': 'Junction',
-  'armor-locations': 'Junction',
-  'jewelry-locations': 'Junction',
-  'player-games': 'Junction',
 };
 
 export const useMetadataStore = defineStore('metadata', () => {
@@ -51,63 +48,112 @@ export const useMetadataStore = defineStore('metadata', () => {
 
   function getGroupedTables() {
     const groups: Record<string, TableMeta[]> = {
-      'Combat': [],
-      'Equipment': [],
-      'Crafting': [],
+      'Monsters': [],
       'Characters': [],
-      'Lookup Tables': [],
+      'Combat': [],
+      'Weapons': [],
+      'Armor': [],
+      'Jewelry & Spellbooks': [],
+      'Magic': [],
+      'Crafting': [],
+      'Inventory': [],
+      'Other': [],
     };
 
     const categoryMap: Record<string, string> = {
-      'monsters': 'Combat',
-      'monster-actions': 'Combat',
-      'monster-instances': 'Combat',
-      'monster-conditions': 'Combat',
-      'damage-types': 'Combat',
+      // Monsters
+      'monsters': 'Monsters',
+      'monster-actions': 'Monsters',
+      'monster-conditions': 'Monsters',
+      'monster-instances': 'Monsters',
+
+      // Characters
+      'characters': 'Characters',
+      'character-conditions': 'Characters',
+      'character-skills': 'Characters',
+      'races': 'Characters',
+      'race-skills': 'Characters',
+      'players': 'Characters',
+      'games': 'Characters',
+
+      // Combat
+      'actions': 'Combat',
+      'battles': 'Combat',
       'conditions': 'Combat',
       'condition-overrides': 'Combat',
-      'character-conditions': 'Combat',
+      'damage-types': 'Combat',
+      'poison-tiers': 'Combat',
       'slayer-types': 'Combat',
-      'actions': 'Combat',
-      'weapons': 'Equipment',
-      'weapon-attributes': 'Equipment',
-      'weapon-skills': 'Equipment',
-      'weapon-instances': 'Equipment',
-      'weapon-instance-attributes': 'Equipment',
-      'weapon-poisons': 'Equipment',
-      'special-moves': 'Equipment',
-      'armor-classes': 'Equipment',
-      'armor-attributes': 'Equipment',
-      'armor-locations': 'Equipment',
-      'armor-bands': 'Equipment',
-      'armor-carry-costs': 'Equipment',
-      'gems': 'Equipment',
-      'gem-rarities': 'Equipment',
-      'jewelry-attributes': 'Equipment',
-      'jewelry-locations': 'Equipment',
-      'spellbook-attributes': 'Equipment',
-      'spellbook-instances': 'Equipment',
-      'magical-properties': 'Equipment',
+      'special-moves': 'Combat',
+
+      // Weapons
+      'weapons': 'Weapons',
+      'weapon-attributes': 'Weapons',
+      'weapon-instances': 'Weapons',
+      'weapon-instance-attributes': 'Weapons',
+      'weapon-poisons': 'Weapons',
+      'weapon-skills': 'Weapons',
+
+      // Armor
+      'armors': 'Armor',
+      'armor-attributes': 'Armor',
+      'armor-bands': 'Armor',
+      'armor-classes': 'Armor',
+      'armor-class-damage-reductions': 'Armor',
+      'armor-instances': 'Armor',
+      'armor-instance-attributes': 'Armor',
+      'armor-instance-damage-reductions': 'Armor',
+      'armor-locations': 'Armor',
+      'shields': 'Armor',
+      'shield-instances': 'Armor',
+
+      // Jewelry & Spellbooks
+      'gems': 'Jewelry & Spellbooks',
+      'gem-rarities': 'Jewelry & Spellbooks',
+      'jewelry-attributes': 'Jewelry & Spellbooks',
+      'jewelry-instances': 'Jewelry & Spellbooks',
+      'jewelry-instance-attributes': 'Jewelry & Spellbooks',
+      'jewelry-locations': 'Jewelry & Spellbooks',
+      'spellbook-attributes': 'Jewelry & Spellbooks',
+      'spellbook-instances': 'Jewelry & Spellbooks',
+      'spellbook-instance-attributes': 'Jewelry & Spellbooks',
+
+      // Magic
+      'spells': 'Magic',
+      'spell-schools': 'Magic',
+      'magical-properties': 'Magic',
+
+      // Crafting
       'materials': 'Crafting',
       'material-types': 'Crafting',
-      'races': 'Characters',
-      'skills': 'Characters',
-      'characters': 'Characters',
-      'inventories': 'Characters',
-      'items': 'Characters',
-      'spells': 'Equipment',
-      'spell-schools': 'Equipment',
-      'loot-tables': 'Equipment',
-      'equip-locations': 'Lookup Tables',
-      'item-categories': 'Lookup Tables',
-      'held-slots': 'Lookup Tables',
-      'held-slot-occupancies': 'Lookup Tables',
-      'storage-types': 'Lookup Tables',
-      'reload-families': 'Lookup Tables',
+      'material-overlays': 'Crafting',
+      'recipes': 'Crafting',
+      'recipe-families': 'Crafting',
+      'recipe-ingredients': 'Crafting',
+      'runic-affix-pools': 'Crafting',
+      'runic-affix-pool-entries': 'Crafting',
+      'runic-item-rule-groups': 'Crafting',
+      'runic-tool-families': 'Crafting',
+      'runic-tool-family-rule-groups': 'Crafting',
+      'runic-tool-tiers': 'Crafting',
+
+      // Inventory
+      'inventories': 'Inventory',
+      'storage-items': 'Inventory',
+      'storage-item-categories': 'Inventory',
+      'storage-types': 'Inventory',
+      'loot-tables': 'Inventory',
+
+      // Other
+      'equip-locations': 'Other',
+      'held-slots': 'Other',
+      'maps': 'Other',
+      'reload-families': 'Other',
+      'skills': 'Other',
     };
 
     for (const table of tables.value) {
-      const group = categoryMap[table.route] || 'Lookup Tables';
+      const group = categoryMap[table.route] || 'Other';
       const arr = groups[group];
       if (arr) arr.push(table);
     }

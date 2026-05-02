@@ -7,6 +7,7 @@ import { StorageType } from '../../entities/storage-type.entity.js';
 import { ReloadFamily } from '../../entities/reload-family.entity.js';
 import { EquipLocation } from '../../entities/equip-location.entity.js';
 import { HeldSlot } from '../../entities/held-slot.entity.js';
+import { Map } from '../../entities/map.entity.js';
 import { InventoryService } from './inventory.service.js';
 import { InventoryController } from './inventory.controller.js';
 import { StorageItemService } from './storage-item.service.js';
@@ -21,6 +22,8 @@ import { EquipLocationService } from './equip-location.service.js';
 import { EquipLocationController } from './equip-location.controller.js';
 import { HeldSlotService } from './held-slot.service.js';
 import { HeldSlotController } from './held-slot.controller.js';
+import { MapService } from './map.service.js';
+import { MapController } from './map.controller.js';
 
 @Module({
   imports: [
@@ -32,6 +35,7 @@ import { HeldSlotController } from './held-slot.controller.js';
       ReloadFamily,
       EquipLocation,
       HeldSlot,
+      Map,
     ]),
   ],
   providers: [
@@ -42,6 +46,7 @@ import { HeldSlotController } from './held-slot.controller.js';
     ReloadFamilyService,
     EquipLocationService,
     HeldSlotService,
+    MapService,
   ],
   controllers: [
     InventoryController,
@@ -51,6 +56,7 @@ import { HeldSlotController } from './held-slot.controller.js';
     ReloadFamilyController,
     EquipLocationController,
     HeldSlotController,
+    MapController,
   ],
   exports: [
     InventoryService,
@@ -60,6 +66,7 @@ import { HeldSlotController } from './held-slot.controller.js';
     ReloadFamilyService,
     EquipLocationService,
     HeldSlotService,
+    MapService,
   ],
 })
 export class InventoryModule {}

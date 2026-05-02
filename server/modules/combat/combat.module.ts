@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Entities
 import { Action } from '../../entities/action.entity.js';
+import { Battle } from '../../entities/battle.entity.js';
 import { Condition } from '../../entities/condition.entity.js';
 import { ConditionOverride } from '../../entities/condition-override.entity.js';
 import { CharacterCondition } from '../../entities/character-condition.entity.js';
@@ -15,6 +16,7 @@ import { SlayerType } from '../../entities/slayer-type.entity.js';
 
 // Services
 import { ActionService } from './action.service.js';
+import { BattleService } from './battle.service.js';
 import { ConditionService } from './condition.service.js';
 import { ConditionOverrideService } from './condition-override.service.js';
 import { CharacterConditionService } from './character-condition.service.js';
@@ -27,6 +29,7 @@ import { SlayerTypeService } from './slayer-type.service.js';
 
 // Controllers
 import { ActionController } from './action.controller.js';
+import { BattleController } from './battle.controller.js';
 import { ConditionController } from './condition.controller.js';
 import { ConditionOverrideController } from './condition-override.controller.js';
 import { CharacterConditionController } from './character-condition.controller.js';
@@ -40,25 +43,25 @@ import { SlayerTypeController } from './slayer-type.controller.js';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Action, Condition, ConditionOverride, CharacterCondition,
+      Action, Battle, Condition, ConditionOverride, CharacterCondition,
       DamageType, Monster, MonsterAction, MonsterCondition,
       MonsterInstance, SlayerType,
     ]),
   ],
   providers: [
-    ActionService, ConditionService, ConditionOverrideService,
+    ActionService, BattleService, ConditionService, ConditionOverrideService,
     CharacterConditionService, DamageTypeService, MonsterService,
     MonsterActionService, MonsterConditionService, MonsterInstanceService,
     SlayerTypeService,
   ],
   controllers: [
-    ActionController, ConditionController, ConditionOverrideController,
+    ActionController, BattleController, ConditionController, ConditionOverrideController,
     CharacterConditionController, DamageTypeController, MonsterController,
     MonsterActionController, MonsterConditionController, MonsterInstanceController,
     SlayerTypeController,
   ],
   exports: [
-    ActionService, ConditionService, ConditionOverrideService,
+    ActionService, BattleService, ConditionService, ConditionOverrideService,
     CharacterConditionService, DamageTypeService, MonsterService,
     MonsterActionService, MonsterConditionService, MonsterInstanceService,
     SlayerTypeService,

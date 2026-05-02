@@ -86,10 +86,10 @@ describe('Metadata Store', () => {
     const grouped = store.getGroupedTables();
     const groupMap = Object.fromEntries(grouped);
 
-    // 'monsters' → Combat
-    expect(groupMap['Combat']).toContainEqual(expect.objectContaining({ route: 'monsters' }));
-    // 'weapons' → Equipment
-    expect(groupMap['Equipment']).toContainEqual(expect.objectContaining({ route: 'weapons' }));
+    // 'monsters' → Monsters
+    expect(groupMap['Monsters']).toContainEqual(expect.objectContaining({ route: 'monsters' }));
+    // 'weapons' → Weapons
+    expect(groupMap['Weapons']).toContainEqual(expect.objectContaining({ route: 'weapons' }));
     // 'materials' → Crafting
     expect(groupMap['Crafting']).toContainEqual(expect.objectContaining({ route: 'materials' }));
     // 'characters' → Characters
